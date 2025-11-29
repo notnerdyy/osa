@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沖繩快樂自由行</title>
+    <style>
+        :root {
+            --primary: 5F8670;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text: #1F2937;
+            --sub-text: #6B7280;
+            --accent: #EF4444; /* 警告/重點色 */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        /* 模擬 App 的容器 */
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--bg);
+            min-height: 100vh;
+        }
+
+        /* 標題區 */
+        header {
+            background: #7D0A0A;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; }
+        p.subtitle { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+
+        /* 分頁導航 Tab */
+        .tabs {
+            display: flex;
+            background: white;
+            padding: 10px 5px;
+            overflow-x: auto;
+            position: sticky;
+            top: 70px; /* 根據 Header 高度調整 */
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: none;
+            background: none;
+            font-weight: 600;
+            color: var(--sub-text);
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        /* 行程卡片列表 */
+        .day-content {
+            display: none;
+            padding: 15px;
+            animation: fadeIn 0.3s;
+        }
+
+        .day-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 單個行程卡片 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+            border-left: 5px solid var(--primary);
+        }
+
+        .card.hotel { border-left-color: #8B5CF6; } /* 住宿用紫色 */
+        .card.warning { border-left-color: var(--accent); } /* 重要事項用紅色 */
+
+        .time {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .card.warning .time { color: var(--accent); }
+
+        .location {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: #E5E7EB;
+            color: var(--sub-text);
+            font-weight: normal;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #4B5563;
+            margin-bottom: 12px;
+            background: #F9FAFB;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        /* Google Map 按鈕 */
+        .map-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px 0; 
+            background-color: #EBF5FF;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .map-btn:hover {
+            background-color: #DBEAFE;
+        }
+        
+        .map-btn svg { margin-right: 6px; }
+
+        /* 頁尾 */
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #9CA3AF;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>✈️ 沖繩聖誕之旅 🎅</h1>
+        <p class="subtitle">Enjoy your trip in Okinawa</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('day1')">DAY 1</button>
+        <button class="tab-btn" onclick="openTab('day2')">DAY 2</button>
+        <button class="tab-btn" onclick="openTab('day3')">DAY 3</button>
+        <button class="tab-btn" onclick="openTab('day4')">DAY 4</button>
+    </div>
+
+    <div id="day1" class="day-content active">
+        <div class="card">
+            <span class="time">13:10 - 15:30</span>
+				<span> 班機號碼:OD 0882 </span>
+            <div class="location">抵達那霸機場 (OKA) <span class="tag">飛機</span></div>
+        </div>
+
+        <div class="card warning">
+            <span class="time">16:00 - 17:00</span>
+            <div class="location">ME Car Rental 取車 <span class="tag">接駁/租車</span></div>
+            <div class="note">⚠️ 國內線抵達後，請聯絡工作人員並搭乘電梯前往3樓。
+之後，請步行至【6號出口】。會有工作人員等候您，並帶您前往店家取車。店家聯絡資訊：Whatsapp
+（+818032278152）、LINEID：（@merentalcar，）、
+Kakao (+818039787732) •
+國際線抵達旅客，請聯繫工作人員並依照［DomesticLine］的指示往右走，搭乘電梯至3樓。
+之後，請依照【國內線】的指示牌並直行至【6號出口】國內線抵達處。將有工作人員等候帶您前往門市取
+車。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=ME+Car+Rental+Okinawa" target="_blank" class="map-btn">📍 MEレンタカーME Car Rental <br>
+127-1 Yone, Tomigusuku, Okinawa
+901-0224, Japan</a>
+        </div>
+
+        <div class="card">
+            <span class="time">17:00 - 18:00</span>
+            <div class="location">開車前往美國村 <span class="tag">自駕 50分</span></div>
+        </div>
+
+        <div class="card hotel">
+            <span class="time">18:00 - 19:00</span>
+            <div class="location">Vessel Hotel Campana <span class="tag">Check-in</span></div>
+            <div class="note">🚗 免費停車。記得去展望浴場！</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Vessel+Hotel+Campana+Okinawa" target="_blank" class="map-btn">📍 導航至飯店</a>
+        </div>
+
+        <div class="card">
+            <span class="time">19:00 - 21:30</span>
+            <div class="location">美國村 Depot Island <span class="tag">步行</span></div>
+            <div class="note">🍽️ 聖誕夜景與晚餐 (未定)</div>
+        </div>
+    </div>
+
+    <div id="day2" class="day-content">
+        <div class="card">
+            <span class="time">09:30</span>
+            <div class="location">飯店退房 & 出發 <span class="tag">行李上車</span></div>
+        </div>
+
+        <div class="card">
+            <span class="time">10:00 - 11:30</span>
+            <div class="location">BicCamera  <span class="tag">自駕 35分</span></div>
+            <a href="https://www.google.com/maps/search/?api=1&query=KOJIMA×BicCamera+那霸店" target="_blank" class="map-btn">📍 導航至 BicCamera</a>
+        </div>
+
+        <div class="card">
+            <span class="time">12:10 - 13:10</span>
+            <div class="location">泊港魚市場 <span class="tag">午餐</span></div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Tomari+Iyumachi" target="_blank" class="map-btn">📍 導航至魚市場</a>
+        </div>
+
+        <div class="card">
+            <span class="time">13:10 - 14:30</span>
+            <div class="location">瀨長島 Umikaji Terrace <span class="tag">自駕</span></div>
+            <div class="note">📸 飛機+海景合照。天氣不好可略過。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Senagajima+Umikaji+Terrace" target="_blank" class="map-btn">📍 導航至瀨長島</a>
+        </div>
+
+        <div class="card warning">
+            <span class="time">14:30 - 15:00</span>
+            <div class="location">加油 & 準備還車 <span class="tag">急</span></div>
+            <div class="note">⚠️ 15:00 是硬性還車目標！那霸市區易塞車，請提早。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=gas+station+near+Me+Car+Rental+Okinawa" target="_blank" class="map-btn">📍 搜尋附近加油站</a>
+        </div>
+
+        <div class="card">
+            <span class="time">15:00 - 16:40</span>
+            <div class="location">還車 & 移動 <span class="tag">接駁→單軌</span></div>
+            <div class="note">ME Car Rental 還車 → 接駁至赤嶺站 → 單軌至縣廳前站。</div>
+        </div>
+
+        <div class="card hotel">
+            <span class="time">16:40</span>
+            <div class="location">Comfort Hotel 縣廳前 <span class="tag">Check-in</span></div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Comfort+Hotel+Naha+Prefectural+Office" target="_blank" class="map-btn">📍 導航至飯店</a>
+        </div>
+
+        <div class="card">
+            <span class="time">17:00 - 19:00</span>
+            <div class="location">Buchi 燒肉 久茂地店 <span class="tag">步行/晚餐</span></div>
+            <div class="note">🍽️ 預約準時開吃！</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Yakiniku+Buchi+Kumoji" target="_blank" class="map-btn">📍 導航至燒肉店</a>
+        </div>
+    </div>
+
+    <div id="day3" class="day-content">
+        <div class="card">
+            <span class="time">10:00 - 12:00</span>
+            <div class="location">DFS T Galleria 免稅店 <span class="tag">單軌</span></div>
+            <div class="note">💳 需出示護照和機票資訊。Omoromachi站。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=T+Galleria+Okinawa+by+DFS" target="_blank" class="map-btn">📍 導航至 DFS</a>
+        </div>
+
+        <div class="card">
+            <span class="time">12:30 - 14:00</span>
+            <div class="location">彦 (Hiko) 本店 <span class="tag">午餐</span></div>
+            <div class="note">🍱 日式御膳或鰻魚飯。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Hiko+Okinawa+Omoromachi" target="_blank" class="map-btn">📍 導航至彥本店</a>
+        </div>
+
+        <div class="card">
+            <span class="time">15:00 - 18:00</span>
+            <div class="location">國際通大採購 <span class="tag">步行</span></div>
+            <div class="note">🛍️ 從牧志站開始逛，慢慢走回飯店。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Kokusai+Dori" target="_blank" class="map-btn">📍 導航至國際通</a>
+        </div>
+    </div>
+
+    <div id="day4" class="day-content">
+        <div class="card">
+            <span class="time">07:00</span>
+            <div class="location">飯店 Check-out <span class="tag">退房</span></div>
+        </div>
+
+        <div class="card">
+            <span class="time">07:15</span>
+            <div class="location">前往機場 <span class="tag">單軌 13分</span></div>
+            <div class="note">縣廳前站 → 那霸機場站。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Prefectural+Office+Station" target="_blank" class="map-btn">📍 導航至縣廳前站</a>
+        </div>
+
+        <div class="card">
+            <span class="time">07:45</span>
+            <div class="location">抵達那霸機場 <span class="tag">報到</span></div>
+        </div>
+        
+        <div class="card">
+            <span class="time">09:45</span>
+					<span> 班機號碼:IT231 </span>
+            <div class="location">✈️ 班機起飛 <span class="tag">回程</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(dayId) {
+        // 隱藏所有內容
+        const contents = document.querySelectorAll('.day-content');
+        contents.forEach(content => content.classList.remove('active'));
+
+        // 移除所有按鈕的 active 狀態
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        // 顯示選中的內容
+        document.getElementById(dayId).classList.add('active');
+        
+        // 設定按鈕 active 狀態 (透過 event 找到點擊的按鈕)
+        const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(dayId));
+        if (activeBtn) activeBtn.classList.add('active');
+
+        // 自動回到頂部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
